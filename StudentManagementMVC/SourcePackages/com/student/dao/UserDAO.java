@@ -21,6 +21,9 @@ public class UserDAO {
     private static final String SQL_GET_BY_ID = 
         "SELECT * FROM users WHERE id = ?";
     
+    private static final String SQL_UPDATE_PASSWORD = 
+        "UPDATE users SET password = ? WHERE id = ?";
+    
     // TODO: Implement getConnection()
     private Connection getConnection() throws SQLException {
         try {
@@ -108,5 +111,22 @@ public class UserDAO {
         user.setCreatedAt(rs.getTimestamp("created_at"));
         user.setLastLogin(rs.getTimestamp("last_login"));
         return user;
+    }
+    
+    // Update user's password
+    public boolean updatePassword(int userId, String newHashedPassword) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_PASSWORD)) {
+            
+            stmt.setString(1, newHashedPassword);
+            stmt.setInt(2, userId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

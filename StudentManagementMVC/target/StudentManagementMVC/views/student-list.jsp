@@ -18,7 +18,69 @@ prefix="c" %>
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
-        padding: 20px;
+        padding: 0;
+      }
+
+      .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 16px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .navbar h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+      }
+
+      .role-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .role-admin {
+        background-color: #f5576c;
+        color: white;
+      }
+
+      .role-user {
+        background-color: #38ef7d;
+        color: #155724;
+      }
+
+      .navbar-right a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .navbar-right a:hover {
+        background-color: rgba(255, 255, 255, 0.2);
       }
 
       .container {
@@ -28,6 +90,7 @@ prefix="c" %>
         border-radius: 10px;
         padding: 30px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
       }
 
       h1 {
@@ -317,6 +380,21 @@ prefix="c" %>
     </style>
   </head>
   <body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+      <h2>📚 Student Management System</h2>
+      <div class="navbar-right">
+        <div class="user-info">
+          <span>Welcome, ${sessionScope.user.fullName}</span>
+          <span class="role-badge role-${sessionScope.role}">
+            ${sessionScope.role}
+          </span>
+        </div>
+        <a href="dashboard">Dashboard</a>
+        <a href="logout">Logout</a>
+      </div>
+    </div>
+
     <div class="container">
       <h1>📚 Student Management System</h1>
       <p class="subtitle">MVC Pattern with Jakarta EE & JSTL</p>
@@ -383,12 +461,14 @@ prefix="c" %>
         </c:if>
       </div>
 
-      <!-- Add New Student Button -->
-      <div style="margin-bottom: 20px">
-        <a href="student?action=new" class="btn btn-primary">
-          ➕ Add New Student
-        </a>
-      </div>
+      <!-- Add New Student Button - Admin only -->
+      <c:if test="${sessionScope.role eq 'admin'}">
+        <div style="margin-bottom: 20px">
+          <a href="student?action=new" class="btn btn-primary">
+            ➕ Add New Student
+          </a>
+        </div>
+      </c:if>
 
       <!-- Student Table -->
       <c:choose>
@@ -436,7 +516,9 @@ prefix="c" %>
                     </c:if>
                   </a>
                 </th>
-                <th>Actions</th>
+                <c:if test="${sessionScope.role eq 'admin'}">
+                  <th>Actions</th>
+                </c:if>
               </tr>
             </thead>
             <tbody>
@@ -447,23 +529,25 @@ prefix="c" %>
                   <td>${student.fullName}</td>
                   <td>${student.email}</td>
                   <td>${student.major}</td>
-                  <td>
-                    <div class="actions">
-                      <a
-                        href="student?action=edit&id=${student.id}"
-                        class="btn btn-secondary"
-                      >
-                        ✏️ Edit
-                      </a>
-                      <a
-                        href="student?action=delete&id=${student.id}"
-                        class="btn btn-danger"
-                        onclick="return confirm('Are you sure you want to delete this student?')"
-                      >
-                        🗑️ Delete
-                      </a>
-                    </div>
-                  </td>
+                  <c:if test="${sessionScope.role eq 'admin'}">
+                    <td>
+                      <div class="actions">
+                        <a
+                          href="student?action=edit&id=${student.id}"
+                          class="btn btn-secondary"
+                        >
+                          ✏️ Edit
+                        </a>
+                        <a
+                          href="student?action=delete&id=${student.id}"
+                          class="btn btn-danger"
+                          onclick="return confirm('Are you sure you want to delete this student?')"
+                        >
+                          🗑️ Delete
+                        </a>
+                      </div>
+                    </td>
+                  </c:if>
                 </tr>
               </c:forEach>
             </tbody>

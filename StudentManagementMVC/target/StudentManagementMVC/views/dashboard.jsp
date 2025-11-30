@@ -347,6 +347,11 @@ prefix="c" %>
             <span class="action-icon">🔍</span>
             <span>Search Students</span>
           </a>
+
+          <a href="change-password" class="action-btn secondary">
+            <span class="action-icon">🔒</span>
+            <span>Change Password</span>
+          </a>
         </div>
 
         <!-- Admin-only Actions -->
